@@ -6,5 +6,10 @@ export default defineNuxtConfig({
     public: {
       UNSPLASH_ACCESS_KEY: process.env.VUE_APP_UNSPLASH_ACCESS_KEY,
     }
+  },
+  ui: {
+    notifications: {
+      position: 'top-0 bottom-auto'
+    }
   }
 })

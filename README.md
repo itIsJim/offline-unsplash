@@ -1,6 +1,29 @@
-# Nuxt 3 Minimal Starter
+# Offline Unsplash
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+An app that that uses the Unsplash public API to search and display images based on a keyword given as a search, using VueJS and NuxtJS, with pagination features and a detailed view for each image.
+
+Checkout the live demo [here](https://offline-unsplash.vercel.app/).
+
+## Before you start
+
+You will need to have an Unsplash account to get an access key. You can create one [here](https://unsplash.com/developers).
+
+## Configuration
+
+To develop the app, please first clone the project to your local environment. 
+
+```bash
+git clone https://github.com/itIsJim/offline-unsplash.git
+```
+
+Then, navigate to the project's root directory and create a `.env` file with the following content:
+
+```
+# .env
+UNSPLASH_ACCESS_KEY=YOUR_UNSPLASH_ACCESS_KEY
+```
+**make sure to replace `YOUR_UNSPLASH_ACCESS_KEY` with your own Unsplash access key. It should look like `UNSPLASH_ACCESS_KEY=qwuhi123.....`**
+
 
 ## Setup
 
@@ -38,38 +61,3 @@ yarn dev
 bun run dev
 ```
 
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
