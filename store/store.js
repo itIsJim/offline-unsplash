@@ -1,21 +1,12 @@
-import { createApp } from 'vue'
-import MyList from "~/components/MyList.vue";
-import { createStore } from 'vuex'
-
-// Define your Vuex store
-const store = createStore({
-    state() {
-        return {
-            imgList: []
-        }
+import { reactive } from 'vue'
+export const store = reactive({
+    imgList: [],
+    newImage: false,
+    addImage( image) {
+        this.imgList.push(image);
+        this.newImage = true;
     },
-    mutations: {
-        addImage(state, image) {
-            state.imgList.push(image);
-        }
+    setNewImage(value) {
+        this.newImage = value;
     }
 })
-
-// Create a new Vue application and use the Vuex store
-const app = createApp(MyList) // Pass the root component App here
-app.use(store)
