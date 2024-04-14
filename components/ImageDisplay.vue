@@ -24,7 +24,6 @@ export default {
     const selectedImage = ref({});
     const isOpen = ref(false);
     const openModal = (image) => {
-      console.log(image)
       selectedImage.value = image;
       isOpen.value = true;
     };
