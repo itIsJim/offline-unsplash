@@ -5,9 +5,6 @@
         <img :src="image.url" :alt="image.alt" class="image"/>
       </div>
       <div class="description-wrapper">
-        <a :download="image.alt" :href="image.download" :title="image.alt">
-          <UIcon name="i-heroicons-folder-arrow-down" class="download-icon"/>
-        </a>
         <h1><strong>{{ image.alt || 'No Description Available' }}</strong></h1>
         <p>❤️ {{ image.likes }}</p>
         <p><strong>Created At:</strong> {{ formattedDate }}</p>
@@ -18,45 +15,84 @@
         </div>
       </div>
     </div>
+    <div class="footer">
+      <template v-if="routeIncludesList()">
+        <UIcon name="i-heroicons-heart-solid" class="heart-icon"/>
+      </template>
+      <template v-else>
+        <UIcon @click="addImageToStore" name="i-heroicons-heart" class="heart-icon"/>
+      </template>
+      <UIcon @click="toggleCommenting" name="i-heroicons-chat-bubble-left-right" class="chat-bubble-left-right-icon"/>
+    </div>
   </UCard>
+  <USlideover v-model="isCommenting">
+    <Comments :comments="comments"/>
+  </USlideover>
 </template>
 
+<script setup>
+import { ref, computed, watchEffect } from 'vue';
+import { useRoute } from 'vue-router';
+import { store } from "~/store/store.js";
+import Quote from 'inspirational-quotes';
+import Comments from './Comments.vue';
+const toast = useToast();
 
+const route = useRoute();
+const props = defineProps({
+  image: {
+    type: Object,
+    required: true,
+    default: () => ({})
+  }
+});
 
-<script>
-import { ref } from 'vue';
+const isCommenting = ref(false);
+const comments = ref([]);
 
-export default {
-  props: {
-    image: {
-      type: Object,
-      default: () => ({}),
-    },
-  },
-  setup(props) {
-    const isOpen = ref(false);
+function addImageToStore() {
+  store.addImage(props.image);
+  toast.add({title:'Image added to favorites successfully!'});
+}
 
-    const formattedDate = computed(() => {
-      if (props.image.createdAt) {
-        const date = new Date(props.image.createdAt);
-        return date.toLocaleDateString('it-IT');
-      }
-      return '';
-    });
+function toggleCommenting() {
+  isCommenting.value = !isCommenting.value;
+}
 
-    const formattedTags = computed(() => {
-      return props.image.tags?.map(tag => tag.title).join(', ') || 'No Tags';
-    });
+function routeIncludesList() {
+  return route.path.includes('list');
+}
 
-    return { isOpen, formattedDate, formattedTags };
-  },
-};
+const formattedDate = computed(() => {
+  return props.image.createdAt ? new Date(props.image.createdAt).toLocaleDateString('it-IT') : '';
+});
+
+const formattedTags = computed(() => {
+  return props.image.tags ? props.image.tags.map(tag => tag.title).join(', ') : 'No Tags';
+});
+
+watchEffect(() => {
+  if (isCommenting.value) {
+    comments.value = generateRandomComments();
+  }
+});
+
+function generateRandomComments() {
+  return Array.from({ length: 20 }, (_, i) => {
+    const quote = Quote.getQuote();
+    return {
+      id: i,
+      comment: quote.text,
+      username: quote.author
+    };
+  });
+}
 </script>
 
 <style scoped>
 .single-image-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   gap: 20px;
   align-item: center;
@@ -110,12 +146,22 @@ export default {
   }
 }
 
-.download-icon {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 10;
+.heart-icon, .chat-bubble-left-right-icon {
   cursor: pointer;
+  font-size: 24px;
+  margin-right: 20px;
+}
+
+.image-footer {
+  display: flex;
+  gap: 10px;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 20px;
 }
 </style>
 
