@@ -5,9 +5,10 @@
       <button class="search-button" @click="() => fetchImage(1)">Search</button>
     </div>
     <div class="images-container">
-      <ImageDisplay :images="images" />
+      <UProgress v-if="loading" animation="swing" class="loading-bar" />
+      <ImageDisplay v-else :images="images" />
     </div>
-    <div class="pagination-controls">
+    <div class="pagination-controls" v-if="images.length > 0">
       <button class="prev-btn" @click="fetchPreviousPage" :disabled="currentPage <= 1"> < </button>
       <span style="color: #3eaf7c">PAGE {{ currentPage }}</span>
       <button class="next-btn" @click="fetchNextPage"> > </button>
@@ -15,17 +16,18 @@
   </div>
 </template>
 
-
 <script>
-
 import { fetchImages } from "@/services/unsplashService.js";
 import { generate } from "random-words";
+import ImageDisplay from '@/components/ImageDisplay.vue' // Assuming you have this component
+
 export default {
   data() {
     return {
       keyword: '',
-      images:[],
+      images: [],
       currentPage: 1,
+      loading: false,
     };
   },
   methods: {
@@ -33,10 +35,14 @@ export default {
       if (!this.keyword) {
         this.keyword = generate();
       }
+      this.loading = true;
       this.currentPage = page;
-      console.log(process.env.VUE_APP_UNSPLASH_ACCESS_KEY);
-      const images = await fetchImages(this.keyword, page);
-      this.images = images.length > 0 ? images : [];
+      try {
+        const images = await fetchImages(this.keyword, page);
+        this.images = images.length > 0 ? images : [];
+      } finally {
+        this.loading = false;
+      }
     },
     async fetchNextPage() {
       this.fetchImage(this.currentPage + 1);
@@ -46,8 +52,10 @@ export default {
         this.fetchImage(this.currentPage - 1);
       }
     },
-
   },
+  components: {
+    ImageDisplay,
+  }
 };
 </script>
 
@@ -91,7 +99,6 @@ export default {
 }
 
 .search-button:hover {
-  font-size: 18px;
   color: #3eaf7c;
   border: 1.5px solid #3eaf7c;
 
@@ -152,6 +159,7 @@ export default {
   overflow-y: auto;
   width: 100%;
   margin: 20px 0;
+
 }
 
 .pagination-controls {
@@ -164,5 +172,10 @@ export default {
   display: flex;
   justify-content: center;
   margin: 20px 0;
+}
+.loading-bar {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>
