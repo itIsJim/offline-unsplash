@@ -19,7 +19,7 @@
 <script>
 import { fetchImages } from "@/services/unsplashService.js";
 import { generate } from "random-words";
-import ImageDisplay from '@/components/ImageDisplay.vue' // Assuming you have this component
+import ImageDisplay from '@/components/ImageDisplay.vue'
 
 export default {
   data() {
